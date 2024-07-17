@@ -11,5 +11,5 @@ and allows users to update their information.
 
 ## Setup
 1. Clone the repository:
-   git clone https://github.com/user/user_management_app.git
+   git clone [https://github.com/user/user_management_app.git](https://github.com/ganeshshirole/user_app_clean_arch.git)
    cd user_management_app
