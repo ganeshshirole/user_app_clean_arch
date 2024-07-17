@@ -1,22 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:user_management_app/bloc/user_bloc.dart';
-import 'package:user_management_app/screens/user_list_screen.dart';
-import 'package:user_management_app/services/api_service.dart';
+import 'package:provider/provider.dart';
+import 'package:user_management_app_provider/data/repositories/user_repository.dart';
+import 'package:user_management_app_provider/domain/usecases/fetch_users.dart';
+import 'package:user_management_app_provider/presentation/providers/user_provider.dart';
+import 'package:user_management_app_provider/presentation/screens/user_list_screen.dart';
+import 'package:user_management_app_provider/utils/constants.dart';
 
 void main() {
-  runApp(const MyApp());
+  final userRepository = UserRepository(baseUrl: API.baseUrl);
+  final fetchUsers = FetchUsers(repository: userRepository);
+  final updateUser = UpdateUser(repository: userRepository);
+
+  runApp(MyApp(fetchUsers: fetchUsers, updateUser: updateUser));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final FetchUsers fetchUsers;
+  final UpdateUser updateUser;
+
+  const MyApp({super.key, required this.fetchUsers, required this.updateUser});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => UserBloc(apiService: ApiService()),
+    return ChangeNotifierProvider(
+      create: (_) =>
+          UserProvider(fetchUsers: fetchUsers, updateUser: updateUser)
+            ..loadUsers(),
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'User Management',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
